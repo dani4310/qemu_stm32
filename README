@@ -43,6 +43,7 @@ Other configure options which control the STM32 implementation:
 
 Other QEMU configure options which are useful for troubleshooting:
     --extra-cflags=-DDEBUG_GIC
+    --extra-cflags=-DDEBUG_UNASSIGNED
 
 qemu-system-arm options which are useful for trobuleshooting:
     -d ?
