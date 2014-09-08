@@ -198,7 +198,7 @@ static const MemoryRegionOps stm32_afio_ops = {
 
 static void stm32_afio_reset(DeviceState *dev)
 {
-    Stm32Afio *s = FROM_SYSBUS(Stm32Afio, SYS_BUS_DEVICE(dev));
+    Stm32Afio *s = STM32_AFIO(dev);
 
     stm32_afio_AFIO_MAPR_write(s, 0x00000000, true);
     stm32_afio_AFIO_EXTICR_write(s, 0, 0x00000000, true);
@@ -240,7 +240,7 @@ static int stm32_afio_init(SysBusDevice *dev)
 
     s->stm32_rcc = (Stm32Rcc *)s->stm32_rcc_prop;
 
-    memory_region_init_io(&s->iomem, &stm32_afio_ops, s,
+    memory_region_init_io(&s->iomem, OBJECT(s), &stm32_afio_ops, s,
                           "afio", 0x03ff);
     sysbus_init_mmio(dev, &s->iomem);
 
@@ -255,7 +255,9 @@ static Property stm32_afio_properties[] = {
 static void add_gpio_link(Stm32Afio *s, int gpio_index, const char *link_name)
 {
     object_property_add_link(OBJECT(s), link_name, TYPE_STM32_GPIO,
-                                     (Object **)&s->gpio[gpio_index], NULL);
+                                 (Object **)&s->gpio[gpio_index],
+                                 object_property_allow_set_link,
+                                 OBJ_PROP_LINK_UNREF_ON_RELEASE, &error_abort);
 }
 
 static void stm32_afio_instance_init(Object *obj)
@@ -271,7 +273,9 @@ static void stm32_afio_instance_init(Object *obj)
     add_gpio_link(s, 6, "gpio[g]");
 
     object_property_add_link(obj, "exti", TYPE_STM32_EXTI,
-                                     (Object **)&s->exti, NULL);
+                                 (Object **)&s->exti,
+                                 object_property_allow_set_link,
+                                 OBJ_PROP_LINK_UNREF_ON_RELEASE, &error_abort);
 
 }
 

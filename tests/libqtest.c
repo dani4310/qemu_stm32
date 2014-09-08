@@ -156,8 +156,6 @@ QTestState *qtest_init(const char *extra_args, int num_serial_ports)
 {
     QTestState *s;
     int i, j;
-    gchar *socket_path;
-    gchar *qmp_socket_path;
     gchar *command;
     GString *extra_socket_args;
     const char *qemu_binary, *external_args, *qtest_log_path;
@@ -298,7 +296,7 @@ static void socket_sendf(SocketInfo *socket_info, const char *fmt, va_list ap)
     gchar *str = g_strdup_vprintf(fmt, ap);
     size_t size = strlen(str);
 
-    socket_send(socket_info->fd, str, size);
+    socket_send(socket_info, str, size);
     g_free(str);
 }
 
@@ -426,7 +424,7 @@ QDict *qtest_qmp_receive(QTestState *s)
         ssize_t len;
         char c;
 
-        len = read(&s->qmp_socket, &c, 1);
+        len = read(s->qmp_socket.fd, &c, 1);
         if (len == -1 && errno == EINTR) {
             continue;
         }
@@ -576,7 +574,8 @@ gpio_id qtest_irq_intercept_in(QTestState *s, const char *qom_path)
 
 void qtest_set_irq_in(QTestState *s, const char *string, int num, int level)
 {
-    qtest_sendf(s, "set_irq_in %s %d %s\n", string, num, level ? "raise" : "lowe
+    qtest_sendf(s, "set_irq_in %s %d %s\n", string, num,
+                   level ? "raise" : "lower");
     qtest_rsp(s, 0);
 }
 
