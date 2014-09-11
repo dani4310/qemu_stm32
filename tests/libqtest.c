@@ -361,11 +361,11 @@ redo:
         g_assert(words[2] != NULL);
         g_assert(words[3] != NULL);
 
-        irq = strtoul(words[2], NULL, 0);
+        id = strtoul(words[2], NULL, 0);
         g_assert_cmpint(id, >=, 0);
         g_assert_cmpint(id, <, MAX_GPIO_INTERCEPTS);
 
-        id = strtoul(words[3], NULL, 0);
+        irq = strtoul(words[3], NULL, 0);
         g_assert_cmpint(irq, >=, 0);
         g_assert_cmpint(irq, <, MAX_IRQ);
 
