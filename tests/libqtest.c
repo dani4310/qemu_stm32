@@ -159,6 +159,7 @@ QTestState *qtest_init(const char *extra_args, int num_serial_ports)
     gchar *command;
     GString *extra_socket_args;
     const char *qemu_binary, *external_args, *qtest_log_path;
+    int wait;
 
     qemu_binary = getenv("QTEST_QEMU_BINARY");
     g_assert(qemu_binary != NULL);
@@ -195,8 +196,7 @@ QTestState *qtest_init(const char *extra_args, int num_serial_ports)
         init_socket(&s->serial_port_sockets[i]);
     }
 
-    s->qemu_pid = fork();
-    if (s->qemu_pid == 0) {
+
         command = g_strdup_printf("exec %s "
                                   "-qtest unix:%s,nowait "
                                   "-qtest-log %s "
@@ -213,10 +213,14 @@ QTestState *qtest_init(const char *extra_args, int num_serial_ports)
                                   extra_socket_args->str,
                                   extra_args ?: "",
                                   external_args ?: "");
-        //printf("%s\n", command);
-        execlp("/bin/sh", "sh", "-c", command, NULL);
-        exit(1);
-    }
+        printf("Run this in debugger: %s\n", command);
+        //execlp("/bin/sh", "sh", "-c", command, NULL);
+
+
+
+    printf("Waiting...\n");
+    scanf("%d", &wait);
+    printf("\nProceeding...\n");
 
     socket_accept(&s->qtest_socket);
     socket_accept(&s->qmp_socket);
