@@ -198,6 +198,7 @@ static void test_uart(void)
     config_gpio(GPIOA_BASE_ADDR, 0x44444444, 0x44444b44);
 
     writel(UART2_BASE_ADDR + 0x0c, cr1_enabled); // Enable UART, Transmit, and Receive
+    writel(UART2_BASE_ADDR + 0x08, 300); // Set the baud rate (using a dummy value)
 
     status = readl(UART2_BASE_ADDR + 0x00);
     g_assert_cmpint(status & 0x020, ==, 0);
