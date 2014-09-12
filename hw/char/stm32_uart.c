@@ -751,10 +751,10 @@ static int stm32_uart_init(SysBusDevice *dev)
     sysbus_init_irq(dev, &s->irq);
 
     s->rx_timer =
-        timer_new(QEMU_CLOCK_VIRTUAL, SCALE_MS,
+        timer_new_ns(QEMU_CLOCK_VIRTUAL,
                   (QEMUTimerCB *)stm32_uart_rx_timer_expire, s);
     s->tx_timer =
-        timer_new(QEMU_CLOCK_VIRTUAL, SCALE_MS,
+        timer_new_ns(QEMU_CLOCK_VIRTUAL,
                   (QEMUTimerCB *)stm32_uart_tx_timer_expire, s);
 
     /* Register handlers to handle updates to the USART's peripheral clock. */
